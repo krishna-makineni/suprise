@@ -274,5 +274,5 @@ export const loveStoryConfig = {
   // --------------------------------------------------------------------------
   // Set your final Vercel or Netlify HTTPS URL here.
   // The QR generator script reads directly from this variable!
-  productionUrl: "https://its-always-us.vercel.app", // [EDITABLE: Update with your deployed Vercel domain]
+  productionUrl: "https://suprise-kohl-psi.vercel.app",
 };

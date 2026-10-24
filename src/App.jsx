@@ -17,6 +17,35 @@ import { QrCode, X, ExternalLink, Printer } from 'lucide-react';
 export default function App() {
   const [hasOpenedIntro, setHasOpenedIntro] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
+  const [liveQrDataUrl, setLiveQrDataUrl] = useState('/assets/qr-code.png');
+  const [activeUrl, setActiveUrl] = useState(loveStoryConfig.productionUrl);
+
+  useEffect(() => {
+    const currentOrigin =
+      typeof window !== 'undefined' && window.location.origin.startsWith('http') && !window.location.origin.includes('localhost')
+        ? window.location.origin
+        : loveStoryConfig.productionUrl;
+
+    setActiveUrl(currentOrigin);
+
+    import('qrcode').then((QRCodeModule) => {
+      const qrcode = QRCodeModule.default || QRCodeModule;
+      qrcode
+        .toDataURL(currentOrigin, {
+          errorCorrectionLevel: 'H',
+          margin: 3,
+          width: 800,
+          color: {
+            dark: '#652D42',
+            light: '#FFFFFF',
+          },
+        })
+        .then((url) => {
+          setLiveQrDataUrl(url);
+        })
+        .catch(() => {});
+    }).catch(() => {});
+  }, []);
 
   // Scroll to top when opening or replaying
   const handleOpenIntro = () => {
@@ -162,11 +191,15 @@ export default function App() {
               {/* QR Image */}
               <div className="p-3 bg-white rounded-2xl border border-blush-100 shadow-sm inline-block mb-3">
                 <img
-                  src="/assets/qr-code.png"
+                  src={liveQrDataUrl}
                   alt="QR Code"
                   className="w-48 h-48 object-contain mx-auto"
                 />
               </div>
+
+              <p className="text-[11px] font-mono text-dustyRose-dark truncate max-w-xs mx-auto mb-2">
+                {activeUrl}
+              </p>
 
               <p className="text-xs text-burgundy-700/80 mb-4 px-2">
                 Point your iPhone Camera at this code to open the site directly in Safari.
@@ -185,8 +218,8 @@ export default function App() {
                 </a>
 
                 <a
-                  href="/assets/qr-code.png"
-                  download="Amrutha-QR-Code.png"
+                  href={liveQrDataUrl}
+                  download="Amrutha-Love-QR-Code.png"
                   className="touch-target w-full py-2.5 px-4 rounded-xl bg-blush-100 hover:bg-blush-200 text-burgundy-800 text-xs font-medium flex items-center justify-center gap-2 transition-all"
                 >
                   <span>Download High-Res PNG</span>
